@@ -11,13 +11,13 @@ spec:
       targetPort: 12000
   github:
     argo-combined-app:
-      owner: vfarcic
+      owner: melak-cmd
       repository: argo-combined-app
       webhook:
         endpoint: /argo-combined-app
         port: "12000"
         method: POST
-        url: http://webhook.52.191.88.247.xip.io
+        url: http://webhook.apps.caas-oat.gdc.geodis.org
       events:
         - "*"
       apiToken:
@@ -48,4 +48,4 @@ spec:
            name: github-eventsource-svc
            port:
              number: 12000
-    host: webhook.52.191.88.247.xip.io
+    host: webhook.apps.caas-oat.gdc.geodis.org
