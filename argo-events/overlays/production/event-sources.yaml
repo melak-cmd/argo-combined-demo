@@ -17,7 +17,7 @@ spec:
         endpoint: /argo-combined-app
         port: "12000"
         method: POST
-        url: http://webhook.apps.caas-oat.gdc.geodis.org
+        url: http://webhook.127.0.0.1.xip.io
       events:
         - "*"
       apiToken:
@@ -48,4 +48,4 @@ spec:
            name: github-eventsource-svc
            port:
              number: 12000
-    host: webhook.apps.caas-oat.gdc.geodis.org
+    host: webhook.127.0.0.1.xip.io
