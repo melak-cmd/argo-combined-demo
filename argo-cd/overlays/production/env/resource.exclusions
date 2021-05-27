@@ -1,0 +1,5 @@
+- apiGroups:
+  - tekton.dev
+  kinds:
+  - PipelineRun
+  - TaskRun
