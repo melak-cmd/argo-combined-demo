@@ -10,9 +10,21 @@ resources:
 - githubcred.yaml
 
 patchesJson6902:
-- path: patch/sc-patch.yaml
+- path: patch/eventbus/sc-patch.yaml
   target:
     group: apps
     kind: Deployment
     name: eventbus-controller
     version: v1
+- path: patch/eventsource/sc-patch.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: eventsource-controller
+    version: v1 
+- path: patch/sensor/sc-patch.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: sensor-controller
+    version: v1        
