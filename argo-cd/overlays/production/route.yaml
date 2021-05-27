@@ -1,0 +1,17 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:  
+  name: argo-cd
+spec:
+  host: >-
+    argo-cd-argocd.rhd-fra04-may25-3423486-4c50a18a6ae19b704aa10d04d75751f8-0000.eu-de.containers.appdomain.cloud
+  to:
+    kind: Service
+    name: argocd-server
+    weight: 100
+  port:
+    targetPort: https
+  tls:
+    termination: edge
+  wildcardPolicy: None
+status: {}
