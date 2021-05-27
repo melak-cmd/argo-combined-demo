@@ -1,9 +1,18 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
+namespace: argo-events
+
 resources:
 - ../../base
 - event-sources.yaml
 - sensors.yaml
 - githubcred.yaml
-namespace: argo-events
 
+patchesJson6902:
+- path: patch/sc-patch.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: eventbus-controller
+    version: v1
