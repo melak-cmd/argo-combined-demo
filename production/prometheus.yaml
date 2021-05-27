@@ -20,3 +20,8 @@ spec:
       prune: false
     syncOptions:
     - CreateNamespace=true
+  ignoreDifferences:
+    - group: ""
+      kind: ServiceAccount
+      jsonPointers:
+        - /imagePullSecrets
