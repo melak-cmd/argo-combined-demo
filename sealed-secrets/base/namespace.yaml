@@ -1,7 +1,9 @@
 ---
-
 apiVersion: v1
 kind: Namespace
 metadata:
+  annotations:
+    openshift.io/description: 'Encrypt your Secret into a SealedSecret'
+    openshift.io/display-name: 'GitOps-based encrypting secrets'
+    openshift.io/node-selector: type=apps-node
   name: sealed-secrets
-
