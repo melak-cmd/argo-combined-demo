@@ -7,6 +7,18 @@ resources:
 - ../../base
 - ingress.yaml
 
+configMapGenerator:
+- behavior: merge
+  files: 
+  - env/resource.customizations
+  - env/resource.exclusions
+  name: argocd-cm
+- behavior: merge
+  files:
+  - env/policy.csv
+  - env/policy.default
+  name: argocd-rbac-cm
+
 patchesStrategicMerge:
 - server.yaml
 
