@@ -5,3 +5,4 @@ resources:
 - ../workflows
 - regcred.yaml
 - ingress.yaml
+- regcred.yaml
