@@ -5,9 +5,9 @@ namespace: argo
 
 resources:
 - namespace.yaml
-- github.com/argoproj/argo/manifests/base?ref=stable
-- github.com/argoproj/argo/manifests/cluster-install/workflow-controller-rbac?ref=stable
-- github.com/argoproj/argo/manifests/cluster-install/argo-server-rbac?ref=stable
+- github.com/argoproj/argo/manifests/base?ref=v3.0.2
+- github.com/argoproj/argo/manifests/cluster-install/workflow-controller-rbac?ref=v3.0.2
+- github.com/argoproj/argo/manifests/cluster-install/argo-server-rbac?ref=v3.0.2
 - templates.yaml
 patchesStrategicMerge:
 - config.yaml
