@@ -8,6 +8,7 @@ resources:
 - event-sources.yaml
 - sensors.yaml
 - githubcred.yaml
+- regcred.yaml
 
 patchesJson6902:
 - path: patch/eventbus/sc-patch.yaml
