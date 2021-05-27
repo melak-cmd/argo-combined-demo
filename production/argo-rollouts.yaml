@@ -16,7 +16,7 @@ spec:
   syncPolicy:
     automated:
       selfHeal: true
-      prune: false
+      prune: true
   ignoreDifferences:
   - group: apiextensions.k8s.io
     kind: CustomResourceDefinition
