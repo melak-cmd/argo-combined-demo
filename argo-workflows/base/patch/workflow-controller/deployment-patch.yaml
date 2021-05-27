@@ -1,0 +1,4 @@
+- op: add
+  path: /spec/template/spec/containers/0/args
+  value:            
+      [--configmap, workflow-controller-configmap, --executor-image, argoproj/argoexec:latest, --namespaced]

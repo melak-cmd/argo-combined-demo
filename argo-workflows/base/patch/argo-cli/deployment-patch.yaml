@@ -1,0 +1,28 @@
+- op: add
+  path: /spec/template/spec/containers/0/args
+  value:            
+      [server, --configmap, workflow-controller-configmap]
+
+- op: add
+  path: /spec/template/spec/volumes/-
+  value:
+    name: argo-tls-volume
+    secret:
+      defaultMode: 420
+      secretName: argo-server-tls
+
+- op: add
+  path: /spec/template/spec/containers/0/volumeMounts/-
+  value:    
+    mountPath: /argo-server.key
+    name: argo-tls-volume
+    subPath: tls.key
+    readOnly: true   
+    
+- op: add
+  path: /spec/template/spec/containers/0/volumeMounts/-
+  value:    
+    mountPath: /argo-server.crt
+    name: argo-tls-volume
+    subPath: tls.crt
+    readOnly: true
