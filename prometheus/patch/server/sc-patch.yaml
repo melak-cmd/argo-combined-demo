@@ -1,5 +1,5 @@
 - op: remove
-  path: /spec/template/spec/containers/0/securityContext/runAsUser
+  path: /spec/template/spec/securityContext/runAsUser
   
 - op: remove
   path: /spec/template/spec/securityContext/fsGroup
