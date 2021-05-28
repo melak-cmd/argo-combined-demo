@@ -12,6 +12,7 @@ resources:
 configMapGenerator:
 - behavior: merge
   files: 
+  - env/configManagementPlugins
   - env/resource.customizations
   - env/resource.exclusions
   name: argocd-cm
