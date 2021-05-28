@@ -13,5 +13,5 @@ spec:
         port: web
   probeSelector: {}
   podMonitorSelector: {}
-  replicas: 2
+  replicas: 1
   ruleSelector: {}
