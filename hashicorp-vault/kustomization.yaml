@@ -3,7 +3,5 @@ kind: Kustomization
 
 generators:
 - chartinflator-vault.yaml
-generators:
-- chartinflator-vault.yaml
 commonLabels:
   env: dev
