@@ -1,20 +1,20 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: prometheus
-  namespace: argocd 
-spec:
-  project: production
-  source:
-    path: prometheus
-    repoURL: https://github.com/melak-cmd/argo-combined-demo
-    targetRevision: HEAD
-  destination:
-    namespace: monitoring
-    server: https://kubernetes.default.svc
-  syncPolicy:
-    automated:
-      selfHeal: true
-      prune: true
-    syncOptions:
-    - CreateNamespace=true
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: prometheus
+#   namespace: argocd 
+# spec:
+#   project: production
+#   source:
+#     path: prometheus
+#     repoURL: https://github.com/melak-cmd/argo-combined-demo
+#     targetRevision: HEAD
+#   destination:
+#     namespace: monitoring
+#     server: https://kubernetes.default.svc
+#   syncPolicy:
+#     automated:
+#       selfHeal: true
+#       prune: true
+#     syncOptions:
+#     - CreateNamespace=true
