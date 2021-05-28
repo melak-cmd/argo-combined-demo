@@ -11,6 +11,8 @@ spec:
     path: hashicorp-vault
     repoURL: https://github.com/melak-cmd/argo-combined-demo
     targetRevision: HEAD
+    plugin:
+      name: ChartInflator
   destination:
     namespace: hashicorp-vault
     server: https://kubernetes.default.svc
