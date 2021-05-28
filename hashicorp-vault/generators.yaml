@@ -1,0 +1,7 @@
+apiVersion: builtin
+helmChartInflationGenerator:
+- chartName: prometheus
+  chartRepoUrl: https://github.com/prometheus-community/helm-charts.git
+  chartVersion: v1.2.0
+  releaseName: prometheus
+  releaseNamespace: monitoring
