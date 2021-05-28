@@ -173,10 +173,10 @@ server:
   # OpenShift only - create a route to expose the service
   # The created route will be of type passthrough
   route:
-    enabled: false
+    enabled: true
     labels: {}
     annotations: {}
-    host: chart-example.local
+    host: vault.apps.caas-oat.gdc.geodis.org
 
   # authDelegator enables a cluster role binding to be attached to the service
   # account.  This cluster role binding can be used to setup Kubernetes auth
