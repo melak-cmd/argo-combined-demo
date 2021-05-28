@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/instance: prometheus-community
   name: prometheus-community-kube-state-metrics
-  namespace: hashicorp-vault
+  namespace: monitoring
 imagePullSecrets:
   []
 ---
@@ -24,7 +24,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-alertmanager
-  namespace: hashicorp-vault
+  namespace: monitoring
   annotations:
     {}
 ---
@@ -39,7 +39,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-node-exporter
-  namespace: hashicorp-vault
+  namespace: monitoring
   annotations:
     {}
 ---
@@ -54,7 +54,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-pushgateway
-  namespace: hashicorp-vault
+  namespace: monitoring
   annotations:
     {}
 ---
@@ -69,7 +69,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-server
-  namespace: hashicorp-vault
+  namespace: monitoring
   annotations:
     {}
 ---
@@ -84,7 +84,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-alertmanager
-  namespace: hashicorp-vault
+  namespace: monitoring
 data:
   alertmanager.yml: |
     global: {}
@@ -107,7 +107,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-server
-  namespace: hashicorp-vault
+  namespace: monitoring
 data:
   alerting_rules.yml: |
     {}
@@ -385,7 +385,7 @@ data:
         bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
         relabel_configs:
         - source_labels: [__meta_kubernetes_namespace]
-          regex: hashicorp-vault
+          regex: monitoring
           action: keep
         - source_labels: [__meta_kubernetes_pod_label_app]
           regex: prometheus
@@ -415,7 +415,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-alertmanager
-  namespace: hashicorp-vault
+  namespace: monitoring
 spec:
   accessModes:
     - ReadWriteOnce
@@ -434,7 +434,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-server
-  namespace: hashicorp-vault
+  namespace: monitoring
 spec:
   accessModes:
     - ReadWriteOnce
@@ -676,7 +676,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: prometheus-community-kube-state-metrics
-  namespace: hashicorp-vault
+  namespace: monitoring
 ---
 # Source: prometheus/templates/alertmanager/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -692,7 +692,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: prometheus-community-alertmanager
-    namespace: hashicorp-vault
+    namespace: monitoring
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -712,7 +712,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: prometheus-community-pushgateway
-    namespace: hashicorp-vault
+    namespace: monitoring
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -732,7 +732,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: prometheus-community-server
-    namespace: hashicorp-vault
+    namespace: monitoring
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -743,7 +743,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: prometheus-community-kube-state-metrics
-  namespace: hashicorp-vault
+  namespace: monitoring
   labels:
     app.kubernetes.io/name: kube-state-metrics
     helm.sh/chart: "kube-state-metrics-3.1.0"
@@ -774,7 +774,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-alertmanager
-  namespace: hashicorp-vault
+  namespace: monitoring
 spec:
   ports:
     - name: http
@@ -801,7 +801,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-node-exporter
-  namespace: hashicorp-vault
+  namespace: monitoring
 spec:
   clusterIP: None
   ports:
@@ -828,7 +828,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-pushgateway
-  namespace: hashicorp-vault
+  namespace: monitoring
 spec:
   ports:
     - name: http
@@ -852,7 +852,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-server
-  namespace: hashicorp-vault
+  namespace: monitoring
 spec:
   ports:
     - name: http
@@ -877,7 +877,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-node-exporter
-  namespace: hashicorp-vault
+  namespace: monitoring
 spec:
   selector:
     matchLabels:
@@ -945,7 +945,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus-community-kube-state-metrics
-  namespace: hashicorp-vault
+  namespace: monitoring
   labels:
     app.kubernetes.io/name: kube-state-metrics
     helm.sh/chart: "kube-state-metrics-3.1.0"
@@ -1088,7 +1088,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-alertmanager
-  namespace: hashicorp-vault
+  namespace: monitoring
 spec:
   selector:
     matchLabels:
@@ -1174,7 +1174,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-pushgateway
-  namespace: hashicorp-vault
+  namespace: monitoring
 spec:
   selector:
     matchLabels:
@@ -1228,7 +1228,7 @@ metadata:
     chart: prometheus-14.1.0
     heritage: Helm
   name: prometheus-community-server
-  namespace: hashicorp-vault
+  namespace: monitoring
 spec:
   selector:
     matchLabels:
