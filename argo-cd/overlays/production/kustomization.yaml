@@ -3,6 +3,14 @@ kind: Kustomization
 
 namespace: argocd
 
+replicas:
+- count: 1
+  name: argocd-redis-ha-server
+- count: 1
+  name: argocd-repo-server
+- count: 1
+  name: argocd-server
+
 resources:
 - ../../base
 - ingress.yaml
@@ -31,10 +39,3 @@ patchesJson6902:
     kind: Deployment
     name: argocd-redis
     version: v1
-replicas:
-- count: 2
-  name: argocd-redis-ha-server
-- count: 2
-  name: argocd-repo-server
-- count: 2
-  name: argocd-server
