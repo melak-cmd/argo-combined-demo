@@ -1,8 +1,8 @@
-CHART_REPO_NAME   := prometheus-community
-CHART_REPO_URL    := https://prometheus-community.github.io/helm-charts
-CHART_NAME        := vault
+CHART_REPO_NAME   := kube-state-metrics
+CHART_REPO_URL    := https://kubernetes.github.io/kube-state-metrics
+CHART_NAME        := prometheus
 CHART_VERSION     := 14.1.0
-CHART_VALUES_FILE :=  
+CHART_VALUES_FILE := values.yaml
 
 add-chart-repo:
     helm repo add ${CHART_REPO_NAME} ${CHART_REPO_URL}
