@@ -1,7 +1,7 @@
 CHART_REPO_NAME   := prometheus-community
 CHART_REPO_URL    := https://prometheus-community.github.io/helm-charts
 CHART_NAME        := vault
-CHART_VERSION     := 0.7.0
+CHART_VERSION     := 14.1.0
 CHART_VALUES_FILE :=  
 
 add-chart-repo:
