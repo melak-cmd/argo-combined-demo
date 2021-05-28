@@ -1154,7 +1154,7 @@ spec:
         fsGroup: 65534
         runAsGroup: 65534
         runAsNonRoot: true
-        runAsUser: 1001
+        runAsUser: 65534
       volumes:
         - name: config-volume
           configMap:
@@ -1304,7 +1304,7 @@ spec:
         fsGroup: 65534
         runAsGroup: 65534
         runAsNonRoot: true
-        runAsUser: 1001
+        runAsUser: 65534
       terminationGracePeriodSeconds: 300
       volumes:
         - name: config-volume
