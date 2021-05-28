@@ -4,7 +4,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: vault-agent-injector
-  namespace: monitoring
+  namespace: hashicorp-vault
   labels:
     app.kubernetes.io/name: vault-agent-injector
     app.kubernetes.io/instance: vault
@@ -15,7 +15,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: vault
-  namespace: monitoring
+  namespace: hashicorp-vault
   labels:
     helm.sh/chart: vault-0.7.0
     app.kubernetes.io/name: vault
@@ -27,7 +27,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: vault-config
-  namespace: monitoring
+  namespace: hashicorp-vault
   labels:
     helm.sh/chart: vault-0.7.0
     app.kubernetes.io/name: vault
@@ -91,7 +91,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: vault-agent-injector
-  namespace: monitoring
+  namespace: hashicorp-vault
 ---
 # Source: vault/templates/server-clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -110,14 +110,14 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: vault
-  namespace: monitoring
+  namespace: hashicorp-vault
 ---
 # Source: vault/templates/injector-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: vault-agent-injector-svc
-  namespace: monitoring
+  namespace: hashicorp-vault
   labels:
     app.kubernetes.io/name: vault-agent-injector
     app.kubernetes.io/instance: vault
@@ -137,7 +137,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: vault-internal
-  namespace: monitoring
+  namespace: hashicorp-vault
   labels:
     helm.sh/chart: vault-0.7.0
     app.kubernetes.io/name: vault
@@ -166,7 +166,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: vault
-  namespace: monitoring
+  namespace: hashicorp-vault
   labels:
     helm.sh/chart: vault-0.7.0
     app.kubernetes.io/name: vault
@@ -196,7 +196,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vault-agent-injector
-  namespace: monitoring
+  namespace: hashicorp-vault
   labels:
     app.kubernetes.io/name: vault-agent-injector
     app.kubernetes.io/instance: vault
@@ -235,7 +235,7 @@ spec:
             - name: AGENT_INJECT_LOG_LEVEL
               value: info
             - name: AGENT_INJECT_VAULT_ADDR
-              value: http://vault.monitoring.svc:8200
+              value: http://vault.hashicorp-vault.svc:8200
             - name: AGENT_INJECT_VAULT_AUTH_PATH
               value: auth/kubernetes
             - name: AGENT_INJECT_VAULT_IMAGE
@@ -243,7 +243,7 @@ spec:
             - name: AGENT_INJECT_TLS_AUTO
               value: vault-agent-injector-cfg
             - name: AGENT_INJECT_TLS_AUTO_HOSTS
-              value: vault-agent-injector-svc,vault-agent-injector-svc.monitoring,vault-agent-injector-svc.monitoring.svc
+              value: vault-agent-injector-svc,vault-agent-injector-svc.hashicorp-vault,vault-agent-injector-svc.hashicorp-vault.svc
             - name: AGENT_INJECT_LOG_FORMAT
               value: standard
             - name: AGENT_INJECT_REVOKE_ON_SHUTDOWN
@@ -279,7 +279,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: vault
-  namespace: monitoring
+  namespace: hashicorp-vault
   labels:
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: vault
@@ -457,7 +457,7 @@ webhooks:
     clientConfig:
       service:
         name: vault-agent-injector-svc
-        namespace: monitoring
+        namespace: hashicorp-vault
         path: "/mutate"
       caBundle: ""
     rules:
