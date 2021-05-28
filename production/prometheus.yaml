@@ -8,8 +8,8 @@ metadata:
 spec:
   project: production
   source:
-    path: charts/prometheus
-    repoURL: https://github.com/prometheus-community/helm-charts.git
+    path: prometheus
+    repoURL: https://github.com/melak-cmd/argo-combined-demo
     targetRevision: HEAD
   destination:
     namespace: monitoring
