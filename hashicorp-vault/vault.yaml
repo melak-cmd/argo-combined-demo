@@ -1,4 +1,47 @@
 ---
+# Source: vault/templates/injector-network-policy.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: vault-agent-injector
+  labels:
+    app.kubernetes.io/name: vault-agent-injector
+    app.kubernetes.io/instance: vault
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: vault-agent-injector
+      app.kubernetes.io/instance: vault
+      component: webhook
+  ingress:
+    - from:
+        - namespaceSelector: {}
+      ports:
+      - port: 8080
+        protocol: TCP
+---
+# Source: vault/templates/server-network-policy.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: vault
+  labels:
+    app.kubernetes.io/name: vault
+    app.kubernetes.io/instance: vault
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: vault
+      app.kubernetes.io/instance: vault
+  ingress:
+    - from:
+        - namespaceSelector: {}
+      ports:
+      - port: 8200
+        protocol: TCP
+      - port: 8201
+        protocol: TCP
+---
 # Source: vault/templates/injector-serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -220,10 +263,6 @@ spec:
       
       
       serviceAccountName: "vault-agent-injector"
-      securityContext:
-        runAsNonRoot: true
-        runAsGroup: 1000
-        runAsUser: 100
       containers:
         - name: sidecar-injector
           
@@ -247,6 +286,8 @@ spec:
             - name: AGENT_INJECT_LOG_FORMAT
               value: standard
             - name: AGENT_INJECT_REVOKE_ON_SHUTDOWN
+              value: "false"
+            - name: AGENT_INJECT_SET_SECURITY_CONTEXT
               value: "false"
             
           args:
@@ -319,11 +360,6 @@ spec:
       terminationGracePeriodSeconds: 10
       serviceAccountName: vault
       
-      securityContext:
-        runAsNonRoot: true
-        runAsGroup: 1000
-        runAsUser: 100
-        fsGroup: 1000
       volumes:
         
         - name: config
