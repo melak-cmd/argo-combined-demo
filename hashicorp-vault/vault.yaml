@@ -614,24 +614,3 @@ webhooks:
         apiVersions: ["v1"]
         resources: ["pods"]
     failurePolicy: Ignore
----
-# Source: vault/templates/server-route.yaml
-kind: Route
-apiVersion: route.openshift.io/v1
-metadata:
-  name: vault
-  labels:
-    helm.sh/chart: vault-0.12.0
-    app.kubernetes.io/name: vault
-    app.kubernetes.io/instance: vault
-    app.kubernetes.io/managed-by: Helm
-spec:
-  host: vault.rhd-fra04-may25-3423486-4c50a18a6ae19b704aa10d04d75751f8-0000.eu-de.containers.appdomain.cloud
-  to:
-    kind: Service
-    name: vault-active
-    weight: 100
-  port:
-    targetPort: 8200
-  tls:
-    termination: passthrough
