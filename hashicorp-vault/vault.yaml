@@ -20,6 +20,27 @@ spec:
       - port: 8080
         protocol: TCP
 ---
+# Source: vault/templates/server-disruptionbudget.yaml
+# PodDisruptionBudget to prevent degrading the server cluster through
+# voluntary cluster changes.
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: vault
+  namespace: hashicorp-vault
+  labels:
+    helm.sh/chart: vault-0.12.0
+    app.kubernetes.io/name: vault
+    app.kubernetes.io/instance: vault
+    app.kubernetes.io/managed-by: Helm
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: vault
+      app.kubernetes.io/instance: vault
+      component: server
+---
 # Source: vault/templates/injector-serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -64,15 +85,18 @@ data:
       address = "[::]:8200"
       cluster_address = "[::]:8201"
     }
-    storage "file" {
-      path = "/vault/data"
+    storage "consul" {
+      path = "vault"
+      address = "HOST_IP:8500"
     }
+    
+    service_registration "kubernetes" {}
     
     # Example configuration for using auto-unseal, using Google Cloud KMS. The
     # GKMS keys must already exist, and the cluster must have a service account
     # that is authorized to access GCP KMS.
     #seal "gcpckms" {
-    #   project     = "vault-helm-dev"
+    #   project     = "vault-helm-dev-246514"
     #   region      = "global"
     #   key_ring    = "vault-helm-unseal-kr"
     #   crypto_key  = "vault-helm-unseal-key"
@@ -133,6 +157,42 @@ subjects:
   name: vault
   namespace: hashicorp-vault
 ---
+# Source: vault/templates/server-discovery-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: hashicorp-vault
+  name: vault-discovery-role
+  labels:
+    helm.sh/chart: vault-0.12.0
+    app.kubernetes.io/name: vault
+    app.kubernetes.io/instance: vault
+    app.kubernetes.io/managed-by: Helm
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list", "update", "patch"]
+---
+# Source: vault/templates/server-discovery-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: vault-discovery-rolebinding
+  namespace: hashicorp-vault
+  labels:
+    helm.sh/chart: vault-0.12.0
+    app.kubernetes.io/name: vault
+    app.kubernetes.io/instance: vault
+    app.kubernetes.io/managed-by: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: vault-discovery-role
+subjects:
+- kind: ServiceAccount
+  name: vault
+  namespace: hashicorp-vault
+---
 # Source: vault/templates/injector-service.yaml
 apiVersion: v1
 kind: Service
@@ -153,6 +213,64 @@ spec:
     app.kubernetes.io/name: vault-agent-injector
     app.kubernetes.io/instance: vault
     component: webhook
+---
+# Source: vault/templates/server-ha-active-service.yaml
+# Service for active Vault pod
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-active
+  namespace: hashicorp-vault
+  labels:
+    helm.sh/chart: vault-0.12.0
+    app.kubernetes.io/name: vault
+    app.kubernetes.io/instance: vault
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+
+spec:
+  publishNotReadyAddresses: true
+  ports:
+    - name: http
+      port: 8200
+      targetPort: 8200
+    - name: https-internal
+      port: 8201
+      targetPort: 8201
+  selector:
+    app.kubernetes.io/name: vault
+    app.kubernetes.io/instance: vault
+    component: server
+    vault-active: "true"
+---
+# Source: vault/templates/server-ha-standby-service.yaml
+# Service for standby Vault pod
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-standby
+  namespace: hashicorp-vault
+  labels:
+    helm.sh/chart: vault-0.12.0
+    app.kubernetes.io/name: vault
+    app.kubernetes.io/instance: vault
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+
+spec:
+  publishNotReadyAddresses: true
+  ports:
+    - name: http
+      port: 8200
+      targetPort: 8200
+    - name: https-internal
+      port: 8201
+      targetPort: 8201
+  selector:
+    app.kubernetes.io/name: vault
+    app.kubernetes.io/instance: vault
+    component: server
+    vault-active: "false"
 ---
 # Source: vault/templates/server-headless-service.yaml
 # Service for Vault cluster
@@ -328,7 +446,7 @@ metadata:
 spec:
   serviceName: vault-internal
   podManagementPolicy: Parallel
-  replicas: 1
+  replicas: 3
   updateStrategy:
     type: OnDelete
   selector:
@@ -426,11 +544,6 @@ spec:
           volumeMounts:
           
   
-    
-            - name: data
-              mountPath: /vault/data
-    
-  
   
             - name: config
               mountPath: /vault/config
@@ -473,15 +586,6 @@ spec:
                 ]
   
   volumeClaimTemplates:
-    - metadata:
-        name: data
-      
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 10Gi
 ---
 # Source: vault/templates/injector-mutating-webhook.yaml
 apiVersion: admissionregistration.k8s.io/v1
@@ -525,7 +629,7 @@ spec:
   host: vault.rhd-fra04-may25-3423486-4c50a18a6ae19b704aa10d04d75751f8-0000.eu-de.containers.appdomain.cloud
   to:
     kind: Service
-    name: vault
+    name: vault-active
     weight: 100
   port:
     targetPort: 8200
