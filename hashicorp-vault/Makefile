@@ -1,7 +1,7 @@
 CHART_REPO_NAME   := hashicorp
 CHART_REPO_URL    := https://helm.releases.hashicorp.com
 CHART_NAME        := vault
-CHART_VERSION     := 0.7.0
+CHART_VERSION     := 0.12.0
 CHART_VALUES_FILE := values.yaml
 
 add-chart-repo:
