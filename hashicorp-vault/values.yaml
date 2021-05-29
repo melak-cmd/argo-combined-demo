@@ -264,7 +264,7 @@ server:
     enabled: true
     labels: {}
     annotations: {}
-    host: 
+    host: vault.rhd-fra04-may25-3423486-4c50a18a6ae19b704aa10d04d75751f8-0000.eu-de.containers.appdomain.cloud
 
   # authDelegator enables a cluster role binding to be attached to the service
   # account.  This cluster role binding can be used to setup Kubernetes auth
