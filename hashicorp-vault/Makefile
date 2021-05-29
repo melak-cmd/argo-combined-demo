@@ -5,8 +5,8 @@ CHART_VERSION     := 0.12.0
 CHART_VALUES_FILE := values.yaml
 
 add-chart-repo:
-    helm repo add ${CHART_REPO_NAME} ${CHART_REPO_URL}
-    helm repo update
+    @helm repo add ${CHART_REPO_NAME} ${CHART_REPO_URL}
+    @helm repo update
 
 generate-chart-manifest: add-chart-repo
     helm template ${CHART_NAME} ${CHART_REPO_NAME}/${CHART_NAME} \
