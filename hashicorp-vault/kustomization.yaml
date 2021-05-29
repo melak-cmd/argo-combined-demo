@@ -4,3 +4,4 @@ resources:
 - vault.yaml
 commonLabels:
   env: dev
+namespace: hashicorp-vault
