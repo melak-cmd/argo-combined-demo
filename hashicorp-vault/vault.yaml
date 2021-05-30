@@ -1,25 +1,4 @@
 ---
-# Source: vault/templates/injector-network-policy.yaml
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: vault-agent-injector
-  labels:
-    app.kubernetes.io/name: vault-agent-injector
-    app.kubernetes.io/instance: vault
-spec:
-  podSelector:
-    matchLabels:
-      app.kubernetes.io/name: vault-agent-injector
-      app.kubernetes.io/instance: vault
-      component: webhook
-  ingress:
-    - from:
-        - namespaceSelector: {}
-      ports:
-      - port: 8080
-        protocol: TCP
----
 # Source: vault/templates/injector-serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -42,41 +21,6 @@ metadata:
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: vault
     app.kubernetes.io/managed-by: Helm
----
-# Source: vault/templates/server-config-configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: vault-config
-  namespace: hashicorp-vault
-  labels:
-    helm.sh/chart: vault-0.12.0
-    app.kubernetes.io/name: vault
-    app.kubernetes.io/instance: vault
-    app.kubernetes.io/managed-by: Helm
-data:
-  extraconfig-from-values.hcl: |-
-    disable_mlock = true
-    ui = true
-    
-    listener "tcp" {
-      tls_disable = 1
-      address = "[::]:8200"
-      cluster_address = "[::]:8201"
-    }
-    storage "file" {
-      path = "/vault/data"
-    }
-    
-    # Example configuration for using auto-unseal, using Google Cloud KMS. The
-    # GKMS keys must already exist, and the cluster must have a service account
-    # that is authorized to access GCP KMS.
-    #seal "gcpckms" {
-    #   project     = "vault-helm-dev"
-    #   region      = "global"
-    #   key_ring    = "vault-helm-unseal-kr"
-    #   crypto_key  = "vault-helm-unseal-key"
-    #}
 ---
 # Source: vault/templates/injector-clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -253,11 +197,18 @@ spec:
       
       
       serviceAccountName: "vault-agent-injector"
+      hostNetwork: false
+      securityContext:
+        runAsNonRoot: true
+        runAsGroup: 1000
+        runAsUser: 100
       containers:
         - name: sidecar-injector
           
           image: "hashicorp/vault-k8s:0.10.1"
           imagePullPolicy: "IfNotPresent"
+          securityContext:
+            allowPrivilegeEscalation: false
           env:
             - name: AGENT_INJECT_LISTEN
               value: :8080
@@ -276,8 +227,6 @@ spec:
             - name: AGENT_INJECT_LOG_FORMAT
               value: standard
             - name: AGENT_INJECT_REVOKE_ON_SHUTDOWN
-              value: "false"
-            - name: AGENT_INJECT_SET_SECURITY_CONTEXT
               value: "false"
             - name: AGENT_INJECT_CPU_REQUEST
               value: "250m"
@@ -345,27 +294,18 @@ spec:
         component: server
     spec:
       
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/name: vault
-                  app.kubernetes.io/instance: "vault"
-                  component: server
-              topologyKey: kubernetes.io/hostname
-  
       
       
       terminationGracePeriodSeconds: 10
       serviceAccountName: vault
       
+      securityContext:
+        runAsNonRoot: true
+        runAsGroup: 1000
+        runAsUser: 100
+        fsGroup: 1000
       volumes:
         
-        - name: config
-          configMap:
-            name: vault-config
-  
         - name: home
           emptyDir: {}
       containers:
@@ -378,15 +318,10 @@ spec:
           - "-ec"
           args: 
           - |
-            cp /vault/config/extraconfig-from-values.hcl /tmp/storageconfig.hcl;
-            [ -n "${HOST_IP}" ] && sed -Ei "s|HOST_IP|${HOST_IP?}|g" /tmp/storageconfig.hcl;
-            [ -n "${POD_IP}" ] && sed -Ei "s|POD_IP|${POD_IP?}|g" /tmp/storageconfig.hcl;
-            [ -n "${HOSTNAME}" ] && sed -Ei "s|HOSTNAME|${HOSTNAME?}|g" /tmp/storageconfig.hcl;
-            [ -n "${API_ADDR}" ] && sed -Ei "s|API_ADDR|${API_ADDR?}|g" /tmp/storageconfig.hcl;
-            [ -n "${TRANSIT_ADDR}" ] && sed -Ei "s|TRANSIT_ADDR|${TRANSIT_ADDR?}|g" /tmp/storageconfig.hcl;
-            [ -n "${RAFT_ADDR}" ] && sed -Ei "s|RAFT_ADDR|${RAFT_ADDR?}|g" /tmp/storageconfig.hcl;
-            /usr/local/bin/docker-entrypoint.sh vault server -config=/tmp/storageconfig.hcl 
-   
+            /usr/local/bin/docker-entrypoint.sh vault server -dev 
+  
+          securityContext:
+            allowPrivilegeEscalation: false
           env:
             - name: HOST_IP
               valueFrom:
@@ -421,19 +356,16 @@ spec:
             - name: HOME
               value: "/home/vault"
             
+            - name: VAULT_DEV_ROOT_TOKEN_ID
+              value: root
+            - name: VAULT_DEV_LISTEN_ADDRESS
+              value: "[::]:8200"
+  
             
             
           volumeMounts:
           
   
-    
-            - name: data
-              mountPath: /vault/data
-    
-  
-  
-            - name: config
-              mountPath: /vault/config
   
             - name: home
               mountPath: /home/vault
@@ -471,17 +403,6 @@ spec:
                   # to this pod while it's terminating
                   "sleep 5 && kill -SIGTERM $(pidof vault)",
                 ]
-  
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 10Gi
 ---
 # Source: vault/templates/injector-mutating-webhook.yaml
 apiVersion: admissionregistration.k8s.io/v1
@@ -510,24 +431,3 @@ webhooks:
         apiVersions: ["v1"]
         resources: ["pods"]
     failurePolicy: Ignore
----
-# Source: vault/templates/server-route.yaml
-kind: Route
-apiVersion: route.openshift.io/v1
-metadata:
-  name: vault
-  labels:
-    helm.sh/chart: vault-0.12.0
-    app.kubernetes.io/name: vault
-    app.kubernetes.io/instance: vault
-    app.kubernetes.io/managed-by: Helm
-spec:
-  host: vault.rhd-fra04-may25-3423486-4c50a18a6ae19b704aa10d04d75751f8-0000.eu-de.containers.appdomain.cloud
-  to:
-    kind: Service
-    name: vault
-    weight: 100
-  port:
-    targetPort: 8200
-  tls:
-    termination: passthrough
