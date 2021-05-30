@@ -245,7 +245,7 @@ server:
       # kubernetes.io/ingress.class: nginx
       # kubernetes.io/tls-acme: "true"
     hosts:
-      - host: vault.rhd-fra04-may25-3423486-4c50a18a6ae19b704aa10d04d75751f8-0000.eu-de.containers.appdomain.cloud
+      - host: chart-example.local
         paths: []
     ## Extra paths to prepend to the host configuration. This is useful when working with annotation based services.
     extraPaths: []
@@ -261,7 +261,7 @@ server:
   # OpenShift only - create a route to expose the service
   # The created route will be of type passthrough
   route:
-    enabled: true
+    enabled: false
     labels: {}
     annotations: {}
     host: vault.rhd-fra04-may25-3423486-4c50a18a6ae19b704aa10d04d75751f8-0000.eu-de.containers.appdomain.cloud
@@ -501,7 +501,7 @@ server:
   # use dev mode for anything other than experimenting.
   # See https://www.vaultproject.io/docs/concepts/dev-server.html to know more
   dev:
-    enabled: false
+    enabled: true
 
     # Set VAULT_DEV_ROOT_TOKEN_ID value
     devRootToken: "root"
