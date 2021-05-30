@@ -9,10 +9,10 @@ commonLabels:
 resources:
 - vault.yaml
 
-# patchesJson6902:
-# - path: route-patch.yaml
-#   target:
-#     group: route.openshift.io
-#     kind: Route
-#     name: vault
-#     version: v1
+patchesJson6902:
+- path: route-patch.json
+  target:
+    group: route.openshift.io
+    kind: Route
+    name: vault
+    version: v1
