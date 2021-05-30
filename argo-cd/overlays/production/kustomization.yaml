@@ -3,15 +3,15 @@ kind: Kustomization
 
 namespace: argocd
 
-replicas:
-- count: 2
-  name: argocd-redis-ha-server
-- count: 2
-  name: argocd-redis-ha-haproxy  
-- count: 2
-  name: argocd-repo-server
-- count: 2
-  name: argocd-server
+# replicas:
+# - count: 2
+#   name: argocd-redis-ha-server
+# - count: 2
+#   name: argocd-redis-ha-haproxy  
+# - count: 2
+#   name: argocd-repo-server
+# - count: 2
+#   name: argocd-server
 
 resources:
 - ../../base
