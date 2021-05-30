@@ -1,4 +1,25 @@
 ---
+# Source: vault/templates/injector-network-policy.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: vault-agent-injector
+  labels:
+    app.kubernetes.io/name: vault-agent-injector
+    app.kubernetes.io/instance: vault
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: vault-agent-injector
+      app.kubernetes.io/instance: vault
+      component: webhook
+  ingress:
+    - from:
+        - namespaceSelector: {}
+      ports:
+      - port: 8080
+        protocol: TCP
+---
 # Source: vault/templates/injector-serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -197,18 +218,11 @@ spec:
       
       
       serviceAccountName: "vault-agent-injector"
-      hostNetwork: false
-      securityContext:
-        runAsNonRoot: true
-        runAsGroup: 1000
-        runAsUser: 100
       containers:
         - name: sidecar-injector
           
           image: "hashicorp/vault-k8s:0.10.1"
           imagePullPolicy: "IfNotPresent"
-          securityContext:
-            allowPrivilegeEscalation: false
           env:
             - name: AGENT_INJECT_LISTEN
               value: :8080
@@ -227,6 +241,8 @@ spec:
             - name: AGENT_INJECT_LOG_FORMAT
               value: standard
             - name: AGENT_INJECT_REVOKE_ON_SHUTDOWN
+              value: "false"
+            - name: AGENT_INJECT_SET_SECURITY_CONTEXT
               value: "false"
             - name: AGENT_INJECT_CPU_REQUEST
               value: "250m"
@@ -299,11 +315,6 @@ spec:
       terminationGracePeriodSeconds: 10
       serviceAccountName: vault
       
-      securityContext:
-        runAsNonRoot: true
-        runAsGroup: 1000
-        runAsUser: 100
-        fsGroup: 1000
       volumes:
         
         - name: home
@@ -320,8 +331,6 @@ spec:
           - |
             /usr/local/bin/docker-entrypoint.sh vault server -dev 
   
-          securityContext:
-            allowPrivilegeEscalation: false
           env:
             - name: HOST_IP
               valueFrom:
