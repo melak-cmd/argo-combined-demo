@@ -261,7 +261,7 @@ server:
   # OpenShift only - create a route to expose the service
   # The created route will be of type passthrough
   route:
-    enabled: false
+    enabled: true
     labels: {}
     annotations: {}
     host: vault.rhd-fra04-may25-3423486-4c50a18a6ae19b704aa10d04d75751f8-0000.eu-de.containers.appdomain.cloud
