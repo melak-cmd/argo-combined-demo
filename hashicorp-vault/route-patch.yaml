@@ -1,4 +1,5 @@
 - op: replace
-  path: spec/tls
-  value: 
-      termination: edge  
+  path: spec
+  value:
+      tls:
+        termination: passthrough
