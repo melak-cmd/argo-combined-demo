@@ -47,6 +47,7 @@ spec:
       ignoreDifferences: |
         jsonPointers:
         - /spec/host
+  statusBadgeEnabled: true
   resourceExclusions: |
     - apiGroups:
       - tekton.dev
