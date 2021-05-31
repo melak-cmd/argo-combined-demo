@@ -6,13 +6,13 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: default
+  project: production
   source:
     path: rhsso/operator-install
     repoURL: https://github.com/melak-cmd/argo-combined-demo.git
     targetRevision: HEAD
   destination:
-    namespace: sso-dev
+    namespace: rhsso
     server: https://kubernetes.default.svc
   syncPolicy:
     automated:
