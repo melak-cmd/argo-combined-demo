@@ -8,9 +8,11 @@ metadata:
 spec:
   project: production
   source:
-    path: rhsso/operator-install
+    path: rhsso
     repoURL: https://github.com/melak-cmd/argo-combined-demo.git
     targetRevision: HEAD
+    directory:
+      recurse: true
   destination:
     namespace: rhsso
     server: https://kubernetes.default.svc
