@@ -1,18 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: rhsso
+  name: rhsso-operator
   namespace: openshift-gitops
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: production
   source:
-    path: rhsso
+    path: rhsso/operator-install
     repoURL: https://github.com/melak-cmd/argo-combined-demo.git
     targetRevision: HEAD
-    directory:
-      recurse: true
   destination:
     namespace: rhsso
     server: https://kubernetes.default.svc
