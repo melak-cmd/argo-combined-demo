@@ -1,18 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: istio-ingress
-  namespace: argocd
+  name: rhsso
+  namespace: openshift-gitops
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: production
+  project: default
   source:
-    path: manifests/charts/gateways/istio-ingress
+    path: rhsso/operator-install
     repoURL: https://github.com/melak-cmd/argo-combined-demo.git
     targetRevision: HEAD
   destination:
-    namespace: istio-system
+    namespace: sso-dev
     server: https://kubernetes.default.svc
   syncPolicy:
     automated:
