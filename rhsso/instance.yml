@@ -1,0 +1,11 @@
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: rh-keycloak
+  labels:
+    app: sso
+  namespace: rhsso
+spec:
+  externalAccess:
+    enabled: true
+  instances: 1
