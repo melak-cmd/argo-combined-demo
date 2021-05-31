@@ -24,7 +24,7 @@ spec:
       enabled: false
     route:
       enabled: false
-  disableAdmin: true
+  disableAdmin: false
   prometheus:
     enabled: false
     ingress:
