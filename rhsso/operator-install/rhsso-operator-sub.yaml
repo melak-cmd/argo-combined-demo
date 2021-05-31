@@ -3,6 +3,7 @@ kind: Subscription
 metadata:
   annotations:
     argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/sync-wave: "1"
   name: rhsso-operator
   namespace: rhsso
 spec:
